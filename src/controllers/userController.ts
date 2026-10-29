@@ -2,9 +2,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entities/User';
 
-
 const userRepository = AppDataSource.getRepository(User);
-
 
 export class UserController {
    // GET /api/users - Get all users
@@ -38,7 +36,6 @@ export class UserController {
        }
    }
 
-
    // GET /api/users/:id - Get user by ID
    static async getById(req: Request, res: Response) {
        try {
@@ -55,7 +52,6 @@ export class UserController {
                });
            }
 
-
            const user = await userRepository.findOne({
                where: { id },
                select: {
@@ -70,7 +66,6 @@ export class UserController {
                relations: { tasks: true }  // Load related tasks
            });
 
-
            if (!user) {
                return res.status(404).json({
                    success: false,
@@ -80,7 +75,6 @@ export class UserController {
                    }
                });
            }
-
 
            res.json({
                success: true,
@@ -98,12 +92,10 @@ export class UserController {
        }
    }
 
-
    // POST /api/users - Create a new user
    static async create(req: Request, res: Response) {
        try {
            const { name, email, password } = req.body;
-
 
            // Validation
            if (!name || !email || !password) {
@@ -115,7 +107,6 @@ export class UserController {
                    }
                });
            }
-
 
            // Check if email already exists
            const existingUser = await userRepository.findOne({ where: { email } });
@@ -129,7 +120,6 @@ export class UserController {
                });
            }
 
-
            // Create new user
            const user = userRepository.create({
                name,
@@ -137,13 +127,10 @@ export class UserController {
                password  // In a real app, you would hash this with bcrypt!
            });
 
-
            const savedUser = await userRepository.save(user);
-
 
            // Remove password from response
            const { password: _, ...userWithoutPassword } = savedUser;
-
 
            res.status(201).json({
                success: true,
@@ -151,7 +138,8 @@ export class UserController {
                data: userWithoutPassword
            });
        } catch (error) {
-           console.error('Error creating user:', error);
+           // THIS WILL NOW SHOW THE EXACT ERROR IN THE TERMINAL
+           console.error('CRITICAL ERROR CREATING USER:', error); 
            res.status(500).json({
                success: false,
                error: {
@@ -161,7 +149,6 @@ export class UserController {
            });
        }
    }
-
 
    // PUT /api/users/:id - Update a user
    static async update(req: Request, res: Response) {
@@ -178,7 +165,6 @@ export class UserController {
                });
            }
 
-
            const user = await userRepository.findOne({ where: { id } });
           
            if (!user) {
@@ -191,9 +177,7 @@ export class UserController {
                });
            }
 
-
            const { name, email, isActive } = req.body;
-
 
            // Check if email is being changed and already exists
            if (email && email !== user.email) {
@@ -209,19 +193,15 @@ export class UserController {
                }
            }
 
-
            // Update fields
            if (name !== undefined) user.name = name;
            if (email !== undefined) user.email = email;
            if (isActive !== undefined) user.isActive = isActive;
 
-
            const updatedUser = await userRepository.save(user);
-
 
            // Remove password from response
            const { password: _, ...userWithoutPassword } = updatedUser;
-
 
            res.json({
                success: true,
@@ -240,7 +220,6 @@ export class UserController {
        }
    }
 
-
    // DELETE /api/users/:id - Delete a user
    static async delete(req: Request, res: Response) {
        try {
@@ -256,7 +235,6 @@ export class UserController {
                });
            }
 
-
            const user = await userRepository.findOne({ where: { id } });
           
            if (!user) {
@@ -269,9 +247,7 @@ export class UserController {
                });
            }
 
-
            await userRepository.remove(user);
-
 
            res.status(200).json({
                success: true,

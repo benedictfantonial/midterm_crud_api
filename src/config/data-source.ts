@@ -16,7 +16,7 @@ export const AppDataSource = new DataSource({
    password: process.env.DB_PASSWORD,
    database: process.env.DB_DATABASE,
    entities: [User, Task],
-   synchronize: false,
+   synchronize: true,
    logging: process.env.NODE_ENV === 'development',     // Log SQL queries in dev
    migrations: [path.join(__dirname, '../migrations/*.{ts,js}')],
 });
